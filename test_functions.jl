@@ -15,3 +15,5 @@ function g(x)
 end
 
 g(x)
+
+println("hello")
