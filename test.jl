@@ -1,9 +1,7 @@
-a = 1+1
+x = ones(1,10)
 
-b = a
-println(b)
-function ()
-    pedro = 2
-end
+sum(x, dims = 2)
 
-println("Hello")
+include("test_functions.jl")
+
+g(x)
