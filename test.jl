@@ -5,3 +5,5 @@ sum(x, dims = 2)
 include("test_functions.jl")
 
 g(x)
+
+println("Probando")
