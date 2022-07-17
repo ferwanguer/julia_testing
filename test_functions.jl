@@ -1,4 +1,3 @@
-x = zeros(6,1000000)
 
 function g(x)
     n_dims = size(x)[2]
@@ -14,6 +13,4 @@ function g(x)
 
 end
 
-g(x)
 
-println("hello")
