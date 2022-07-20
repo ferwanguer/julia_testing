@@ -7,8 +7,8 @@ mutable struct NormalFeature
     σ:: Float64
     lower_bound::Float64
     upper_bound::Float64
-    ρ_μ:: Float64
-    ρ_σ:: Float64
+    ρ_μ:: Float32
+    ρ_σ:: Float32
  end
 
 function quantum_sampling(n::NormalFeature, n_samples = 6)
@@ -39,9 +39,9 @@ function quantum_update(bpi_feature,feature::NormalFeature)
 end
 
 
-Individuals = [NormalFeature(2,  5,-5.0,5.0,100,1.0001) for i in 1:100]
-N_iterations = 2000
-function Training()
+@time Individuals = [NormalFeature(2,  5,-5.0,5.0,100,1.0001) for i in 1:100]
+
+function Training(Individuals, N_iterations = 20000)
     for i in 1:N_iterations
         samples = mapreduce(quantum_sampling,hcat,Individuals)
         bpii = elitist_sample_evaluation(samples,g,3)
@@ -51,5 +51,5 @@ function Training()
         end
     end
 end
-@time Training()
+@time Training(Individuals)
 print("End")
