@@ -12,7 +12,7 @@ mutable struct NormalFeature
  end
 
  function quantum_init(n_dims = 100)
-    return [NormalFeature(2,  5,-5.0,5.0,100,1.0001) for i in 1:n_dims]
+    return [NormalFeature(2,  5,-5.0,5.0,80,1.0001) for i in 1:n_dims]
  end
 
 function quantum_sampling(n::NormalFeature)
@@ -60,7 +60,7 @@ function update_mapping(Individuals,best_performing_individual)
 end
 
 
-function Training(Individuals = quantum_init(),N_iterations = 100)
+function Training(Individuals = quantum_init(),N_iterations = 1)
     for i in 1:N_iterations
         samples = sample_mapping(Individuals,10)
         bpii = elitist_sample_evaluation(samples,g,3)
@@ -73,5 +73,5 @@ function Training(Individuals = quantum_init(),N_iterations = 100)
     end
     #return samples
 end
-@time Training(quantum_init(),300000)
+@time Training(quantum_init(),200000)
 print("End")
