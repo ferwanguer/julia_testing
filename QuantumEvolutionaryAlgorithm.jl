@@ -15,19 +15,16 @@ mutable struct NormalFeature
     return [NormalFeature(2,  5,-5.0,5.0,100,1.0001) for i in 1:n_dims]
  end
 
-function quantum_sampling(n::NormalFeature, n_samples = 6)
+function quantum_sampling(n::NormalFeature)
     # println(String("The mean is equal to $(normal_individual.μ)" ))
-    d = truncated(Normal(n.μ, n.σ),
-    n.lower_bound,n.upper_bound)
-
-    return rand(d, n_samples)
+    
+    return rand(truncated(Normal(n.μ, n.σ),
+    n.lower_bound,n.upper_bound))
 end
 
-function elitist_sample_evaluation(samples :: Matrix, cost_function::Function, elitism::Int = 5)
-    costs = cost_function(samples)
-    
-    sort_order = sortperm(vec(costs))
-    return mean(samples[sort_order[1:elitism],:], dims = 1)
+function elitist_sample_evaluation(samples :: Matrix, cost_function::Function, elitism::Int = 5)   
+    #sort_order = sortperm(vec(cost_function(samples)))
+    return mean(samples[sortperm(vec(cost_function(samples)))[1:elitism],:], dims = 1)
 end
 
 function quantum_update(bpi_feature,feature::NormalFeature)
@@ -38,27 +35,43 @@ function quantum_update(bpi_feature,feature::NormalFeature)
     feature.σ = (sigma_decider >= 1)*feature.σ*feature.ρ_σ + 
     (sigma_decider < 1)*feature.σ/feature.ρ_σ 
 
-    return
+    return nothing
     
 end
 
 
 #Individuals = quantum_init()
-
-"""function training_step()
-    bpii = elitist_sample_evaluation(mapreduce(quantum_sampling,hcat,Individuals),g,3)
-    map(quantum_update,bpii,Individuals)
-end"""
-
-function Training(Individuals,N_iterations = 20)
-    for i in 1:N_iterations
-        samples = mapreduce(quantum_sampling,hcat,Individuals)
-        bpii = elitist_sample_evaluation(samples,g,3)
-        map(quantum_update,bpii,Individuals)
-        if mod(i,5000) == 0
-            println(i,g(bpii))
+function sample_mapping(Individuals::Vector{NormalFeature},n_samples = 6)
+    samples = Array{Float64}(undef, n_samples, length(Individuals))#zeros(6,length(Individuals))
+    for i in 1:n_samples
+        for j in 1:length(Individuals)
+            samples[i,j] = quantum_sampling(Individuals[j])
         end
-    end
+   end
+    
+return samples
 end
-@time Training(quantum_init(),100000)
+
+function update_mapping(Individuals,best_performing_individual)
+    for i in 1:length(Individuals)
+        quantum_update(best_performing_individual[i],Individuals[i])
+    end
+    return nothing
+end
+
+
+function Training(Individuals = quantum_init(),N_iterations = 100)
+    for i in 1:N_iterations
+        samples = sample_mapping(Individuals,10)
+        bpii = elitist_sample_evaluation(samples,g,3)
+        #map(quantum_update,bpii,Individuals)
+        update_mapping(Individuals,bpii)
+        if mod(i,5000) == 0
+           println(i,g(bpii))
+        end
+        
+    end
+    #return samples
+end
+@time Training(quantum_init(),300000)
 print("End")
