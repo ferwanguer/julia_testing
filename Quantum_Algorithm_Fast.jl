@@ -1,7 +1,7 @@
 
 using Random, Distributions, Plots, LinearAlgebra
 include("test_functions.jl")
-
+#all tested
 mutable struct NormalFeature
     μ:: Vector{Float64}
     σ:: Vector{Float64}
@@ -11,7 +11,7 @@ mutable struct NormalFeature
     ρ_σ:: Float64
  end
 
- function quantum_init(ρ_μ= 100,ρ_σ = 1.001,n_dims = 1000000)
+ function quantum_init(ρ_μ= 100,ρ_σ = 1.0001,n_dims = 100)
     lower_bound = -5*ones(n_dims)
     upper_bound = 5*ones(n_dims)
     μ_0 =  rand.(Uniform.(lower_bound, upper_bound))
@@ -51,13 +51,13 @@ end
 
 
 
-function training(N_iterations = 10000)
-    n = quantum_init(80, 1.004, 10)
+function training(N_iterations = 200000)
+    n = quantum_init(80, 1.0001, 100)
     for i in 1:N_iterations
         samples = quantum_sampling(n,10)
         bpi = elitist_sample_evaluation(samples,g,3)
         quantum_update(vec(bpi), n)
-        if mod(i,1000) == 0
+        if mod(i,5000) == 0
             println(i,g(bpi))
         end
     end
