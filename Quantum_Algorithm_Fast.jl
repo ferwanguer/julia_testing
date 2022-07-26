@@ -51,11 +51,11 @@ end
 
 
 
-function training(N_iterations = 200000)
-    n = quantum_init(80, 1.0001, 100)
+function training(N_iterations = 1000000)
+    n = quantum_init(80, 1.00001, 10000)
     for i in 1:N_iterations
-        samples = quantum_sampling(n,10)
-        bpi = elitist_sample_evaluation(samples,g,3)
+        samples = quantum_sampling(n,3)
+        bpi = elitist_sample_evaluation(samples,g,2)
         quantum_update(vec(bpi), n)
         if mod(i,5000) == 0
             println(i,g(bpi))
