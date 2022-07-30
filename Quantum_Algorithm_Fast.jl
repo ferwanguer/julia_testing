@@ -49,7 +49,7 @@ function quantum_update(bpi::Vector,features::NormalFeature)
     
 end
 
-
+#On monday: start working with python here?... i dont know.
 
 function training(N_iterations = 100000)
     n = quantum_init(80, 1.00015, 5000)
